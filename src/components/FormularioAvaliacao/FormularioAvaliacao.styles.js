@@ -84,10 +84,6 @@ export const RatingChoice = styled.label`
   &:hover span {
     transform: scale(1.12);
   }
-  &:focus-within span {
-    outline: 2px solid var(--brand-green);
-    outline-offset: 3px;
-  }
 `;
 
 export const SubmitReviewButton = styled.button`

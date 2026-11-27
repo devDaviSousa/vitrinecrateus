@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 
 const STORAGE_KEY = 'vitrine-theme';
 
@@ -13,7 +13,7 @@ function getInitialTheme() {
 export function useTheme() {
   const [theme, setTheme] = useState(getInitialTheme);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
 
     try {

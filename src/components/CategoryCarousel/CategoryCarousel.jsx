@@ -18,7 +18,12 @@ function getLabel(category) {
   return category === 'Todas' ? 'Todas as categorias' : category;
 }
 
-export const CategoryCarousel = memo(function CategoryCarousel({ categories, selectedCategory, onCategoryChange }) {
+export const CategoryCarousel = memo(function CategoryCarousel({
+  categories,
+  selectedCategory,
+  onCategoryChange,
+  isSearching = false,
+}) {
   const scrollerRef = useRef(null);
   const buttonRefs = useRef(new Map());
   const buttonRefCallbacksRef = useRef(new Map());
@@ -28,6 +33,7 @@ export const CategoryCarousel = memo(function CategoryCarousel({ categories, sel
   const suppressClickUntilRef = useRef(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -36,6 +42,7 @@ export const CategoryCarousel = memo(function CategoryCarousel({ categories, sel
     const updateNavigation = () => {
       const nextCanScrollLeft = scroller.scrollLeft > 2;
       const nextCanScrollRight = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 2;
+      setHasScrolled(nextCanScrollLeft);
       const previous = navigationStateRef.current;
 
       if (previous.left !== nextCanScrollLeft || previous.right !== nextCanScrollRight) {
@@ -240,13 +247,17 @@ export const CategoryCarousel = memo(function CategoryCarousel({ categories, sel
             data-category="Todas"
             type="button"
             $selected={selectedCategory === 'Todas'}
+            $compact={isSearching || hasScrolled}
+            aria-label="Todas as categorias"
             aria-pressed={selectedCategory === 'Todas'}
             onClick={handleCategoryClick}
           >
             <CategoryIcon $selected={selectedCategory === 'Todas'}>
               <Icon name={getCategoryIcon('Todas')} size={17} />
             </CategoryIcon>
-            <CategoryName title={getLabel('Todas')}>{getLabel('Todas')}</CategoryName>
+            <CategoryName $compact={isSearching || hasScrolled} title={getLabel('Todas')}>
+              {getLabel('Todas')}
+            </CategoryName>
           </CategoryButton>
         )}
 

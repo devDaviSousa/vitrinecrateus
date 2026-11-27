@@ -4,7 +4,6 @@ import { CompanyGrid } from '../../components/CompanyGrid/CompanyGrid.jsx';
 import { Icon } from '../../components/Icon/Icon.jsx';
 import { ThemeToggle } from '../../components/ThemeToggle/ThemeToggle.jsx';
 import { companies } from '../../data/companies.js';
-import { useTheme } from '../../hooks/useTheme/useTheme.js';
 
 import {
   Brand,
@@ -44,8 +43,7 @@ function findCategoryByPrefix(value) {
     ?? 'Todas';
 }
 
-export default function Home() {
-  const { theme, toggleTheme } = useTheme();
+export default function Home({ theme, toggleTheme }) {
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todas');
   const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
@@ -103,6 +101,7 @@ export default function Home() {
           categories={categories}
           selectedCategory={activeCategory}
           onCategoryChange={handleCategoryChange}
+          isSearching={Boolean(query.trim())}
         />
 
         <ResultLine>

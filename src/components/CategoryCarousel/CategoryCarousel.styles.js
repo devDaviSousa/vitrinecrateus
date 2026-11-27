@@ -122,6 +122,10 @@ export const CategoryButton = styled.button`
     border-color 150ms ease,
     transform 150ms ease;
 
+  @media (max-width: 600px) {
+    gap: ${({ $compact }) => ($compact ? '0' : '9px')};
+  }
+
   &:hover {
     transform: translateY(-1px);
   }
@@ -150,9 +154,17 @@ export const CategoryIcon = styled.span`
 
 export const CategoryName = styled.span`
   overflow: hidden;
+  min-width: 0;
+  max-width: 280px;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.015em;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: max-width 220ms ease, opacity 180ms ease;
+
+  @media (max-width: 600px) {
+    max-width: ${({ $compact }) => ($compact ? '0' : '160px')};
+    opacity: ${({ $compact }) => ($compact ? 0 : 1)};
+  }
 `;
