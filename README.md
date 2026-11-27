@@ -20,6 +20,7 @@ Encontre uma categoria, pesquise por nome ou cidade e abra o Instagram da empres
 | --- | --- |
 | React 18 | Componentes e estado da interface |
 | Vite 6 | Desenvolvimento local e build |
+| Axios | Comunicação com a API REST |
 | styled-components | Estilos isolados por componente e tokens globais |
 | JavaScript (ES modules) | Dados e lógica da aplicação |
 
@@ -44,6 +45,24 @@ npm run dev
 
 O Vite mostra no terminal o endereço local para abrir no navegador.
 
+### API de serviços
+
+Crie um arquivo `.env` na raiz usando `.env.example` como referência:
+
+```env
+VITE_API_BASE_URL=http://localhost:3333
+```
+
+A tela inicial consulta `GET /servicos`. O hook `useServicos` controla os dados, o carregamento, os erros e a função `refetch`; o `CompanyGrid` apresenta os resultados e permite tentar novamente quando a chamada falha.
+
+Se o navegador bloquear a chamada por CORS quando o front-end e a API usam portas diferentes, habilite CORS na API para permitir a origem do Vite (por padrão, `http://localhost:5173`). Em uma API Express, por exemplo, configure o middleware CORS no servidor antes das rotas:
+
+```js
+app.use(cors({ origin: 'http://localhost:5173' }));
+```
+
+Se necessário, instale e importe o pacote `cors` no projeto da API. Em desenvolvimento, também é possível configurar um proxy no `vite.config.js`. CORS deve ser configurado no servidor da API ou no proxy de desenvolvimento, não com cabeçalhos adicionados pelo front-end.
+
 ### Build de produção
 
 ```bash
@@ -58,7 +77,7 @@ npm run preview
 
 ### Publicar no Netlify
 
-O arquivo `public/_redirects` encaminha rotas da aplicação, como `/paginaLoja?companyId=1`, para o `index.html`. Assim, o React consegue abrir a loja selecionada mesmo ao acessar ou atualizar essa URL diretamente. Os dados das lojas são carregados localmente de `src/data/companies.js`, sem chamadas de API.
+O arquivo `public/_redirects` encaminha rotas da aplicação, como `/paginaLoja?companyId=1`, para o `index.html`. Assim, o React consegue abrir a loja selecionada mesmo ao acessar ou atualizar essa URL diretamente. Configure `VITE_API_BASE_URL` no ambiente de build para apontar para a API publicada.
 
 ## 🗂️ Estrutura do projeto
 
@@ -75,10 +94,15 @@ src/
 │   ├── CompanyGrid/           # Grade e estado vazio
 │   ├── Icon/                  # Seletor central de ícones
 │   └── ThemeToggle/            # Botão para alternar o tema
-├── data/
-│   └── companies.js           # Lista de empresas consumida pela aplicação
+├── services/
+│   ├── api.js                  # Cliente Axios e URL base
+│   └── servicosService.js      # Requisições de serviços
 ├── hooks/
+│   ├── useServicos/            # Dados, carregamento, erro e refetch
 │   └── useTheme/               # Estado e persistência do tema
+├── data/
+│   ├── companies.js            # Dados usados pela página de loja existente
+│   └── paginaLoja.js           # Conteúdo estático da página de loja
 ├── pages/
 │   └── Home/                   # Tela inicial e estilos da página
 ├── styles/
@@ -87,46 +111,25 @@ src/
     └── categoryIcons.js        # Relação entre categoria e ícone
 ```
 
-Os componentes visuais ficam em pastas próprias. Quando há estilos específicos, o arquivo `.styles.js` acompanha o componente `.jsx`.
+Os componentes visuais ficam em pastas próprias. Quando há estilos específicos, o arquivo `.styles.js` acompanha o componente `.jsx`. A tela inicial adapta os campos de `/servicos` (`nome`, `categoriaDeServico`, `rua`, `numerodoendereco`, `bairro`, `cidade` e `logo`) ao formato usado pelos cards.
 
 ## 🏢 Dados das empresas
 
-A tela inicial importa a constante `companies` de `src/data/companies.js`. Cada empresa segue este formato:
+A tela inicial consome os serviços de `GET /servicos`. A API retorna registros neste formato:
 
 ```js
 {
-  id: 1,
-  nome: '@acaidailha__',
-  categoria: {
-    id: 1,
-    nome: 'AÇAÍ',
-  },
-  local: 'Crateús, CE',
-  imagem: imagemAcai,
-  googleRating: 5.0,
-  googleReviewCount: 60,
-  percentualVotos: 52.2,
-  empate: false,
+  id: 2,
+  nome: 'Eletricista',
+  categoria: 2,
+  cidade: 'Crateús',
+  bairro: 'Centro',
+  logo: 'https://exemplo.com/logo.png',
+  categoriaDeServico: { id: 2, nome: 'Açaí' }
 }
 ```
 
-`percentualVotos` e `empate` continuam nos dados, mas não são exibidos nos cards.
-`googleRating` e `googleReviewCount` são opcionais e alimentam a nota, as estrelas e a contagem de avaliações. Sem esses campos, o card mostra “Sem avaliações”.
-
-### Usar uma imagem local
-
-1. Coloque o arquivo em `src/assets/logos/`.
-2. Importe-o no início de `src/data/companies.js`.
-3. Atribua a variável ao campo `imagem` da empresa correspondente.
-
-```js
-import imagemAcai from '../assets/logos/acaidailha__.jpg';
-
-// No objeto da empresa:
-imagem: imagemAcai,
-```
-
-O campo também pode receber uma URL de imagem pública. Imagens com erro de carregamento mostram uma alternativa com as iniciais do perfil.
+Os dados da API são adaptados ao modelo consumido por `CompanyCard`. Uma imagem ausente ou indisponível exibe as iniciais do serviço.
 
 ## 🧭 Organização da interface
 

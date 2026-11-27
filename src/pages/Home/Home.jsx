@@ -3,7 +3,7 @@ import { CategoryCarousel } from '../../components/CategoryCarousel/CategoryCaro
 import { CompanyGrid } from '../../components/CompanyGrid/CompanyGrid.jsx';
 import { Icon } from '../../components/Icon/Icon.jsx';
 import { ThemeToggle } from '../../components/ThemeToggle/ThemeToggle.jsx';
-import { companies } from '../../data/companies.js';
+import { useServicos } from '../../hooks/useServicos/useServicos.js';
 
 import {
   Brand,
@@ -16,14 +16,6 @@ import {
   Topbar,
 } from './Home.styles.js';
 
-const categories = ['Todas', ...new Set(companies.map((company) => company.categoria.nome))];
-const categorySearchIndex = categories
-  .filter((category) => category !== 'Todas')
-  .map((category) => ({ category, normalizedName: normalizeSearchText(category) }));
-const searchableCompanies = companies.map((company) => ({
-  company,
-  normalizedCategory: normalizeSearchText(company.categoria.nome),
-}));
 const PAGE_SIZE = 24;
 
 function normalizeSearchText(value) {
@@ -35,7 +27,7 @@ function normalizeSearchText(value) {
     .trim();
 }
 
-function findCategoryByPrefix(value) {
+function findCategoryByPrefix(value, categorySearchIndex) {
   const normalizedQuery = normalizeSearchText(value);
   if (!normalizedQuery) return 'Todas';
 
@@ -44,9 +36,41 @@ function findCategoryByPrefix(value) {
 }
 
 export default function Home({ theme, toggleTheme }) {
+  const { data, isLoading, error, refetch } = useServicos();
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todas');
   const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
+
+  const companies = useMemo(() => data.map((servico) => ({
+    id: servico.id,
+    nome: servico.nome,
+    categoria: {
+      id: servico.categoriaDeServico?.id ?? servico.categoria,
+      nome: servico.categoriaDeServico?.nome || 'Sem categoria',
+    },
+    local: [
+      [servico.rua, servico.numerodoendereco].filter(Boolean).join(', '),
+      [servico.bairro, servico.cidade].filter(Boolean).join(', '),
+    ].filter(Boolean).join(' · ') || 'Localização não informada',
+    imagem: servico.logo,
+  })), [data]);
+  const categories = useMemo(
+    () => ['Todas', ...new Set(companies.map((company) => company.categoria.nome))],
+    [companies],
+  );
+  const categorySearchIndex = useMemo(
+    () => categories
+      .filter((category) => category !== 'Todas')
+      .map((category) => ({ category, normalizedName: normalizeSearchText(category) })),
+    [categories],
+  );
+  const searchableCompanies = useMemo(
+    () => companies.map((company) => ({
+      company,
+      normalizedCategory: normalizeSearchText(company.categoria.nome),
+    })),
+    [companies],
+  );
 
   useEffect(() => {
     setVisibleLimit(PAGE_SIZE);
@@ -54,7 +78,7 @@ export default function Home({ theme, toggleTheme }) {
 
   const handleSearchChange = (value) => {
     setQuery(value);
-    setActiveCategory(findCategoryByPrefix(value));
+    setActiveCategory(findCategoryByPrefix(value, categorySearchIndex));
   };
 
   const handleCategoryChange = useCallback((category) => {
@@ -73,7 +97,7 @@ export default function Home({ theme, toggleTheme }) {
         return matchesCategory && matchesQuery;
       })
       .map(({ company }) => company);
-  }, [query, activeCategory]);
+  }, [searchableCompanies, query, activeCategory]);
   const visibleCompanies = filteredCompanies.slice(0, visibleLimit);
 
   return (
@@ -104,14 +128,21 @@ export default function Home({ theme, toggleTheme }) {
           isSearching={Boolean(query.trim())}
         />
 
-        <ResultLine>
-          <span><strong>{filteredCompanies.length} resultados</strong> em Crateús</span>
-          <span>{categories.length - 1} categorias</span>
-        </ResultLine>
+        {!isLoading && !error && (
+          <ResultLine>
+            <span><strong>{filteredCompanies.length} resultados</strong> em Crateús</span>
+            <span>{categories.length - 1} categorias</span>
+          </ResultLine>
+        )}
 
-        <CompanyGrid companies={visibleCompanies} />
+        <CompanyGrid
+          companies={visibleCompanies}
+          isLoading={isLoading}
+          error={error}
+          onRetry={refetch}
+        />
 
-        {visibleLimit < filteredCompanies.length && (
+        {!isLoading && !error && visibleLimit < filteredCompanies.length && (
           <LoadMoreButton
             type="button"
             onClick={() => setVisibleLimit((currentLimit) => currentLimit + PAGE_SIZE)}

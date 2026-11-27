@@ -20,3 +20,29 @@ export const EmptyState = styled.div`
   font-size: 16px;
   line-height: 1.5;
 `;
+
+export const ErrorState = styled(EmptyState)`
+  color: var(--brand-gray);
+
+  p {
+    margin: 0;
+  }
+`;
+
+export const RetryButton = styled.button`
+  min-height: 42px;
+  margin-top: 16px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand-green);
+  color: var(--surface-white);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 3px solid var(--brand-gray);
+    outline-offset: 3px;
+  }
+`;

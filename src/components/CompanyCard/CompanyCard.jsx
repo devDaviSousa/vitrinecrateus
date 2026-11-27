@@ -18,7 +18,7 @@ import {
 export const CompanyCard = memo(function CompanyCard({ company }) {
   const [imageFailed, setImageFailed] = useState(false);
   const storeUrl = `/paginaLoja?companyId=${encodeURIComponent(company.id)}`;
-  const imageContent = imageFailed ? (
+  const imageContent = imageFailed || !company.imagem ? (
     <ImageFallback aria-hidden="true">
       {company.nome.replace(/^@/, '').slice(0, 2).toUpperCase()}
     </ImageFallback>
