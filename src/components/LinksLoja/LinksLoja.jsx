@@ -41,7 +41,7 @@ export function LinksLoja({ website, socialNetworks }) {
             rel={network.href ? 'noopener noreferrer' : undefined}
           >
             <NetworkIcon $network={network.name} aria-hidden="true">
-              {network.mark}
+              <Icon name={network.icon} size={20} />
             </NetworkIcon>
             <span>{network.name}</span>
             <LinkChevron><Icon name="chevronDown" size={16} /></LinkChevron>

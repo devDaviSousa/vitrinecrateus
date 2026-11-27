@@ -6,6 +6,7 @@ import {
   CategoryIcon,
   CategoryName,
   Carousel,
+  CategoryFilters,
   Header,
   Navigation,
   NavigationButton,
@@ -55,6 +56,12 @@ export const CategoryCarousel = memo(function CategoryCarousel({ categories, sel
   }, [categories.length]);
 
   useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (selectedCategory === 'Todas') {
+      scroller?.scrollTo({ left: 0, behavior: 'smooth' });
+      return;
+    }
+
     buttonRefs.current.get(selectedCategory)?.scrollIntoView({
       behavior: 'smooth',
       block: 'nearest',
@@ -227,34 +234,51 @@ export const CategoryCarousel = memo(function CategoryCarousel({ categories, sel
         </Navigation>
       </Header>
 
-      <Scroller
-        ref={scrollerRef}
-        role="group"
-        aria-label="Selecionar categoria"
-        onMouseDown={startMouseDrag}
-        onClickCapture={preventClickAfterSwipe}
-      >
-        {categories.map((category) => {
-          const selected = category === selectedCategory;
+      <CategoryFilters>
+        {categories.includes('Todas') && (
+          <CategoryButton
+            data-category="Todas"
+            type="button"
+            $selected={selectedCategory === 'Todas'}
+            aria-pressed={selectedCategory === 'Todas'}
+            onClick={handleCategoryClick}
+          >
+            <CategoryIcon $selected={selectedCategory === 'Todas'}>
+              <Icon name={getCategoryIcon('Todas')} size={17} />
+            </CategoryIcon>
+            <CategoryName title={getLabel('Todas')}>{getLabel('Todas')}</CategoryName>
+          </CategoryButton>
+        )}
 
-          return (
-            <CategoryButton
-              key={category}
-              ref={getButtonRef(category)}
-              data-category={category}
-              type="button"
-              $selected={selected}
-              aria-pressed={selected}
-              onClick={handleCategoryClick}
-            >
-              <CategoryIcon $selected={selected}>
-                <Icon name={getCategoryIcon(category)} size={17} />
-              </CategoryIcon>
-              <CategoryName title={getLabel(category)}>{getLabel(category)}</CategoryName>
-            </CategoryButton>
-          );
-        })}
-      </Scroller>
+        <Scroller
+          ref={scrollerRef}
+          role="group"
+          aria-label="Selecionar categoria"
+          onMouseDown={startMouseDrag}
+          onClickCapture={preventClickAfterSwipe}
+        >
+          {categories.filter((category) => category !== 'Todas').map((category) => {
+            const selected = category === selectedCategory;
+
+            return (
+              <CategoryButton
+                key={category}
+                ref={getButtonRef(category)}
+                data-category={category}
+                type="button"
+                $selected={selected}
+                aria-pressed={selected}
+                onClick={handleCategoryClick}
+              >
+                <CategoryIcon $selected={selected}>
+                  <Icon name={getCategoryIcon(category)} size={17} />
+                </CategoryIcon>
+                <CategoryName title={getLabel(category)}>{getLabel(category)}</CategoryName>
+              </CategoryButton>
+            );
+          })}
+        </Scroller>
+      </CategoryFilters>
     </Carousel>
   );
 });

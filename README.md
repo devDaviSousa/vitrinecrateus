@@ -9,7 +9,7 @@ Encontre uma categoria, pesquise por nome ou cidade e abra o Instagram da empres
 - **Busca rápida:** filtra empresas por nome, categoria ou cidade, sem diferenciar acentos ou maiúsculas.
 - **Categorias com ícones:** navegue pelo carrossel usando toque, arraste com o mouse ou os botões de navegação.
 - **Resultados progressivos:** a página mostra 24 empresas por vez e permite carregar mais resultados.
-- **Cards de empresa:** exibem imagem, categoria, nome, localização, resumo de avaliações e atalho para o Instagram. O resumo abre um diálogo com os dados cadastrados.
+- **Cards de empresa:** exibem imagem, categoria, nome, localização e resumo de avaliações. A imagem e o botão abrem a página da loja selecionada; o resumo abre um diálogo com as avaliações.
 - **Tema claro e noturno:** alterne pelo botão no cabeçalho; a preferência fica salva no navegador.
 - **Layout responsivo:** grade de cards e controles se adaptam a celulares, tablets e telas maiores.
 - **Acessibilidade básica:** controles possuem rótulos acessíveis e estados de foco visíveis.
@@ -55,6 +55,10 @@ npm run build
 ```bash
 npm run preview
 ```
+
+### Publicar no Netlify
+
+O arquivo `public/_redirects` encaminha rotas da aplicação, como `/paginaLoja?companyId=1`, para o `index.html`. Assim, o React consegue abrir a loja selecionada mesmo ao acessar ou atualizar essa URL diretamente. Os dados das lojas são carregados localmente de `src/data/companies.js`, sem chamadas de API.
 
 ## 🗂️ Estrutura do projeto
 
@@ -129,7 +133,7 @@ O campo também pode receber uma URL de imagem pública. Imagens com erro de car
 - **`Home`** prepara a busca, as categorias selecionadas e a quantidade de resultados visíveis.
 - **`CategoryCarousel`** apresenta os ícones definidos em `categoryIcons.js` e notifica a página quando a seleção muda.
 - **`CompanyGrid`** recebe a lista filtrada e monta um `CompanyCard` para cada empresa.
-- **`CompanyCard`** monta o link do Instagram usando o nome do perfil e remove o `@` do endereço.
+- **`CompanyCard`** direciona a imagem e o botão para a página da loja usando o ID local da empresa.
 - **`useTheme`** aplica o tema no documento e guarda a escolha com a chave `vitrine-theme` no `localStorage`.
 - **`GlobalStyle`** define as cores base e as variáveis para os modos claro e noturno.
 

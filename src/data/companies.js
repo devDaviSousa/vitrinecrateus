@@ -17,8 +17,6 @@ export const companies = [
     },
     local: "Crateús, CE",
     imagem: acaiDaIlhaImage,
-    googleRating: 5,
-    googleReviewCount: 60,
     percentualVotos: 52.2,
     empate: false,
   },

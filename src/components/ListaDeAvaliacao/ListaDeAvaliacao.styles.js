@@ -15,3 +15,10 @@ export const ReviewList = styled.div`
   display: grid;
   gap: 12px;
 `;
+
+export const EmptyReviews = styled.p`
+  margin: 0;
+  color: var(--gray-muted);
+  font-size: 14px;
+  line-height: 1.5;
+`;

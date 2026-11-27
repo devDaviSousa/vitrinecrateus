@@ -40,8 +40,8 @@ export const paginaLojaData = {
     href: '',
   },
   socialNetworks: [
-    { name: 'Instagram', mark: '◎', href: '' },
-    { name: 'WhatsApp', mark: '◉', href: '' },
-    { name: 'Facebook', mark: 'f', href: '' },
+    { name: 'Instagram', icon: 'instagram', href: '' },
+    { name: 'WhatsApp', icon: 'whatsapp', href: '' },
+    { name: 'Facebook', icon: 'facebook', href: '' },
   ],
 };

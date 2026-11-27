@@ -36,6 +36,13 @@ export const Navigation = styled.div`
   }
 `;
 
+export const CategoryFilters = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+`;
+
 export const NavigationButton = styled.button`
   display: grid;
   width: 32px;
@@ -66,7 +73,9 @@ export const NavigationButton = styled.button`
 
 export const Scroller = styled.div`
   display: flex;
+  flex: 1 1 0;
   gap: 9px;
+  min-width: 0;
   overflow-x: auto;
   padding: 3px 2px 9px;
   scroll-behavior: smooth;

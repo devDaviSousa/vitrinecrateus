@@ -25,6 +25,9 @@ import TagIcon from '../../assets/icons/tag/Icon.jsx';
 import SunIcon from '../../assets/icons/sun/Icon.jsx';
 import MoonIcon from '../../assets/icons/moon/Icon.jsx';
 import TrashIcon from '../../assets/icons/trash/Icon.jsx';
+import InstagramIcon from '../../assets/icons/instagram/Icon.jsx';
+import WhatsAppIcon from '../../assets/icons/whatsapp/Icon.jsx';
+import FacebookIcon from '../../assets/icons/facebook/Icon.jsx';
 
 const iconComponents = {
   search: SearchIcon,
@@ -53,6 +56,9 @@ const iconComponents = {
   sun: SunIcon,
   moon: MoonIcon,
   trash: TrashIcon,
+  instagram: InstagramIcon,
+  whatsapp: WhatsAppIcon,
+  facebook: FacebookIcon,
 };
 
 export function Icon({ name, size = 20, strokeWidth = 1.8, ...props }) {

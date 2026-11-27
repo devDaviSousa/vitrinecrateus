@@ -111,14 +111,6 @@ export const NetworkIcon = styled.span`
   width: 20px;
   height: 20px;
   place-items: center;
-  color: ${({ $network }) => {
-    if ($network === "Instagram") return "#d946a7";
-    if ($network === "WhatsApp") return "#24a865";
-    return "#1877f2";
-  }};
-  font-size: ${({ $network }) => ($network === "Facebook" ? "18px" : "21px")};
-  font-weight: 700;
-  line-height: 1;
 `;
 
 export const LinkChevron = styled.span`

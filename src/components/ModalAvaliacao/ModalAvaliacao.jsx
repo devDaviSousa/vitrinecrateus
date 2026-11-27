@@ -5,6 +5,7 @@ import { Rating } from '../RatingStars/RatingStars.styles.js';
 import { FormularioAvaliacao } from '../FormularioAvaliacao/FormularioAvaliacao.jsx';
 import { CardAvaliacao } from '../CardAvaliacao/CardAvaliacao.jsx';
 import { ListaDeAvaliacao } from '../ListaDeAvaliacao/ListaDeAvaliacao.jsx';
+import { getSiteReviewSummary, saveSiteReviews } from '../../utils/siteReviews.js';
 import {
   DialogBody,
   DialogCompany,
@@ -16,30 +17,21 @@ import {
 } from './ModalAvaliacao.styles.js';
 import { Icon } from '../Icon/Icon.jsx';
 
-function getSavedSiteReviews(companyName) {
-  if (typeof window === 'undefined') return [];
-
-  try {
-    const savedReviews = window.localStorage.getItem(`site-reviews:${companyName}`);
-    const parsedReviews = savedReviews ? JSON.parse(savedReviews) : [];
-    return Array.isArray(parsedReviews) ? parsedReviews : [];
-  } catch {
-    return [];
-  }
-}
-
 export function ModalAvaliacao({
   isOpen,
   onClose,
   companyName,
-  rating,
-  reviewCount,
+  siteReviews,
+  onReviewsChange,
 }) {
   const [screen, setScreen] = useState('reviews');
-  const [siteReviews, setSiteReviews] = useState(() => getSavedSiteReviews(companyName));
   const [isPersisted, setIsPersisted] = useState(true);
-  const hasRating = Number.isFinite(rating);
-  const hasReviewCount = Number.isFinite(reviewCount);
+  const { averageRating, reviewCount } = getSiteReviewSummary(siteReviews);
+  const hasReviews = reviewCount > 0;
+  const reviewCountLabel = `${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'}`;
+  const siteReviewCountLabel = reviewCount === 1
+    ? '1 avaliação feita no site'
+    : `${reviewCount} avaliações feitas no site`;
   const modalTitle = screen === 'form'
     ? 'Deixe sua avaliação'
     : screen === 'success'
@@ -58,17 +50,8 @@ export function ModalAvaliacao({
       createdAt: new Date().toISOString(),
     };
     const updatedReviews = [...siteReviews, newReview];
-    let savedToBrowser = false;
-
-    try {
-      window.localStorage.setItem(`site-reviews:${companyName}`, JSON.stringify(updatedReviews));
-      savedToBrowser = true;
-    } catch {
-      // Keep the review available in this open session when browser storage is unavailable.
-    }
-
-    setSiteReviews(updatedReviews);
-    setIsPersisted(savedToBrowser);
+    setIsPersisted(saveSiteReviews(companyName, updatedReviews));
+    onReviewsChange(updatedReviews);
     setScreen('success');
   };
 
@@ -89,11 +72,20 @@ export function ModalAvaliacao({
       ) : screen === 'success' ? (
         <DialogBody>
           <DialogCompany>Obrigado pela sua avaliação!</DialogCompany>
-          <DialogMessage>
-            {isPersisted
-              ? 'Ela foi salva neste navegador e aparecerá aqui nas próximas visitas.'
-              : 'Ela ficará disponível nesta sessão, mas o navegador não permitiu salvá-la para depois.'}
-          </DialogMessage>
+          {averageRating !== null && (
+            <>
+              <DialogScore>
+                <Rating>{ratingFormatter.format(averageRating)}</Rating>
+                <RatingStars rating={averageRating} />
+              </DialogScore>
+              <DialogReviewCount>Média do site · {reviewCountLabel}</DialogReviewCount>
+            </>
+          )}
+          {!isPersisted && (
+            <DialogMessage>
+              Ela ficará disponível nesta sessão, mas o navegador não permitiu salvá-la para depois.
+            </DialogMessage>
+          )}
           <CardAvaliacao review={siteReviews[siteReviews.length - 1]} />
           <WriteReviewButton type="button" onClick={() => setScreen('reviews')}>
             Voltar às avaliações
@@ -103,16 +95,16 @@ export function ModalAvaliacao({
         <>
           <DialogBody>
             <DialogCompany>{companyName}</DialogCompany>
-            {hasRating ? (
+            {hasReviews ? (
               <DialogScore>
-                <Rating>{ratingFormatter.format(rating)}</Rating>
-                <RatingStars rating={rating} />
+                <Rating>{ratingFormatter.format(averageRating)}</Rating>
+                <RatingStars rating={averageRating} />
               </DialogScore>
             ) : (
               <DialogMessage>Esta empresa ainda não possui uma nota cadastrada.</DialogMessage>
             )}
             <DialogReviewCount>
-              {hasReviewCount ? `${reviewCount} avaliações` : 'Sem avaliações cadastradas'}
+              {hasReviews ? siteReviewCountLabel : '0 avaliações'}
             </DialogReviewCount>
           </DialogBody>
 

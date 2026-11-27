@@ -58,8 +58,13 @@ export const StoreContent = styled.div`
   column-gap: 42px;
   row-gap: 28px;
 
-  @media (max-width: 900px) and (min-width: 761px) {
-    column-gap: 28px;
+  @media (min-width: 761px) {
+    width: min(100%, 460px);
+    margin: 0 auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "identity"
+      "links";
   }
 
   @media (max-width: 760px) {
