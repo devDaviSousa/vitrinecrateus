@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { GoogleReviewsModal } from '../GoogleReviewsModal/GoogleReviewsModal.jsx';
+import { ModalAvaliacao } from '../ModalAvaliacao/ModalAvaliacao.jsx';
 import { RatingStars, ratingFormatter } from '../RatingStars/RatingStars.jsx';
 import { Rating } from '../RatingStars/RatingStars.styles.js';
-import { ReviewCount, ReviewSummary } from './GoogleReviews.styles.js';
+import { ReviewCount, ReviewSummary } from './BotaoAvaliacoes.styles.js';
 
-export function GoogleReviews({ companyName, rating, reviewCount }) {
+export function BotaoAvaliacoes({ companyName, rating, reviewCount }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasRating = Number.isFinite(rating);
   const hasReviewCount = Number.isFinite(reviewCount);
@@ -25,7 +25,7 @@ export function GoogleReviews({ companyName, rating, reviewCount }) {
         </ReviewCount>
       </ReviewSummary>
 
-      <GoogleReviewsModal
+      <ModalAvaliacao
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         companyName={companyName}

@@ -1,11 +1,11 @@
-import { SiteReviewCard } from '../SiteReviewCard/SiteReviewCard.jsx';
+import { CardAvaliacao } from '../CardAvaliacao/CardAvaliacao.jsx';
 import {
   ReviewList,
   SiteReviews,
   SiteReviewsTitle,
-} from './SiteReviewList.styles.js';
+} from './ListaDeAvaliacao.styles.js';
 
-export function SiteReviewList({ reviews }) {
+export function ListaDeAvaliacao({ reviews }) {
   if (reviews.length === 0) return null;
 
   return (
@@ -13,7 +13,7 @@ export function SiteReviewList({ reviews }) {
       <SiteReviewsTitle>Avaliações feitas no site</SiteReviewsTitle>
       <ReviewList>
         {reviews.map((review) => (
-          <SiteReviewCard key={review.id} review={review} />
+          <CardAvaliacao key={review.id} review={review} />
         ))}
       </ReviewList>
     </SiteReviews>

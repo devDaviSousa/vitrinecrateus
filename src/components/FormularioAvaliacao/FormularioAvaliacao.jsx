@@ -9,11 +9,11 @@ import {
   RatingChoice,
   ReviewFormContainer,
   SubmitReviewButton,
-} from './ReviewForm.styles.js';
+} from './FormularioAvaliacao.styles.js';
 
 const emptyForm = { author: '', rating: 0, text: '' };
 
-export function ReviewForm({ onSubmit }) {
+export function FormularioAvaliacao({ onSubmit }) {
   const [form, setForm] = useState(emptyForm);
 
   const handleSubmit = (event) => {

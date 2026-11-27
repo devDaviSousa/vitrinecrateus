@@ -44,6 +44,29 @@ export const DialogReviewCount = styled.p`
   font-size: 14px;
 `;
 
+export const BackToReviewsButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  margin: 12px 0 -6px;
+  padding: 0 8px 0 2px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, opacity 150ms ease;
+
+  svg { transform: rotate(180deg); }
+  &:hover { background: var(--gray-soft); }
+  &:active { opacity: .7; }
+  &:focus-visible { outline: 2px solid var(--brand-green); outline-offset: 2px; }
+`;
+
 export const WriteReviewButton = styled.button`
   display: flex;
   align-items: center;

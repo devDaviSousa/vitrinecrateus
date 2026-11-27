@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { Modal } from '../Modal/Modal.jsx';
 import { RatingStars, ratingFormatter } from '../RatingStars/RatingStars.jsx';
 import { Rating } from '../RatingStars/RatingStars.styles.js';
-import { ReviewForm } from '../ReviewForm/ReviewForm.jsx';
-import { SiteReviewCard } from '../SiteReviewCard/SiteReviewCard.jsx';
-import { SiteReviewList } from '../SiteReviewList/SiteReviewList.jsx';
+import { FormularioAvaliacao } from '../FormularioAvaliacao/FormularioAvaliacao.jsx';
+import { CardAvaliacao } from '../CardAvaliacao/CardAvaliacao.jsx';
+import { ListaDeAvaliacao } from '../ListaDeAvaliacao/ListaDeAvaliacao.jsx';
 import {
   DialogBody,
   DialogCompany,
   DialogMessage,
   DialogReviewCount,
   DialogScore,
+  BackToReviewsButton,
   WriteReviewButton,
-} from './GoogleReviewsModal.styles.js';
+} from './ModalAvaliacao.styles.js';
+import { Icon } from '../Icon/Icon.jsx';
 
 function getSavedSiteReviews(companyName) {
   if (typeof window === 'undefined') return [];
@@ -26,7 +28,7 @@ function getSavedSiteReviews(companyName) {
   }
 }
 
-export function GoogleReviewsModal({
+export function ModalAvaliacao({
   isOpen,
   onClose,
   companyName,
@@ -43,6 +45,11 @@ export function GoogleReviewsModal({
     : screen === 'success'
       ? 'Avaliação cadastrada'
       : 'Resumo das avaliações';
+
+  const handleClose = () => {
+    setScreen('reviews');
+    onClose();
+  };
 
   const handleReviewSubmit = (formData) => {
     const newReview = {
@@ -68,12 +75,17 @@ export function GoogleReviewsModal({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title={modalTitle}
-      //subtitle={modalSubtitle}
     >
       {screen === 'form' ? (
-        <ReviewForm onSubmit={handleReviewSubmit} />
+        <>
+          <BackToReviewsButton type="button" onClick={() => setScreen('reviews')}>
+            <Icon name="arrow" size={16} />
+            Voltar às avaliações
+          </BackToReviewsButton>
+          <FormularioAvaliacao onSubmit={handleReviewSubmit} />
+        </>
       ) : screen === 'success' ? (
         <DialogBody>
           <DialogCompany>Obrigado pela sua avaliação!</DialogCompany>
@@ -82,7 +94,7 @@ export function GoogleReviewsModal({
               ? 'Ela foi salva neste navegador e aparecerá aqui nas próximas visitas.'
               : 'Ela ficará disponível nesta sessão, mas o navegador não permitiu salvá-la para depois.'}
           </DialogMessage>
-          <SiteReviewCard review={siteReviews[siteReviews.length - 1]} />
+          <CardAvaliacao review={siteReviews[siteReviews.length - 1]} />
           <WriteReviewButton type="button" onClick={() => setScreen('reviews')}>
             Voltar às avaliações
           </WriteReviewButton>
@@ -104,7 +116,7 @@ export function GoogleReviewsModal({
             </DialogReviewCount>
           </DialogBody>
 
-          <SiteReviewList reviews={siteReviews} />
+          <ListaDeAvaliacao reviews={siteReviews} />
 
           <WriteReviewButton type="button" onClick={() => setScreen('form')}>
             Escrever uma avaliação

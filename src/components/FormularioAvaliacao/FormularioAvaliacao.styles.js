@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const ReviewFormContainer = styled.form`
   display: grid;
@@ -13,7 +13,7 @@ export const FormField = styled.div`
 
 export const FormLabel = styled.label`
   color: var(--brand-gray);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
 `;
 
@@ -73,14 +73,21 @@ export const RatingChoice = styled.label`
   }
 
   span {
-    color: ${({ $selected }) => ($selected ? '#f5c542' : 'var(--gray-border)')};
-    font-size: 32px;
-    line-height: 1;
-    transition: color .15s ease, transform .15s ease;
+    color: ${({ $selected }) => ($selected ? "#f5c542" : "var(--gray-border)")};
+    font-size: 42px;
+    line-height: 0;
+    transition:
+      color 0.15s ease,
+      transform 0.15s ease;
   }
 
-  &:hover span { transform: scale(1.12); }
-  &:focus-within span { outline: 2px solid var(--brand-green); outline-offset: 3px; }
+  &:hover span {
+    transform: scale(1.12);
+  }
+  &:focus-within span {
+    outline: 2px solid var(--brand-green);
+    outline-offset: 3px;
+  }
 `;
 
 export const SubmitReviewButton = styled.button`
@@ -91,11 +98,19 @@ export const SubmitReviewButton = styled.button`
   background: var(--brand-green);
   color: var(--surface-white);
   font: inherit;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity .2s ease, transform .2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 
-  &:hover { opacity: .9; transform: translateY(-1px); }
-  &:focus-visible { outline: 3px solid var(--brand-green); outline-offset: 3px; }
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  &:focus-visible {
+    outline: 3px solid var(--brand-green);
+    outline-offset: 3px;
+  }
 `;

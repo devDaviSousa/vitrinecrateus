@@ -1,7 +1,7 @@
 import { RatingStars } from '../RatingStars/RatingStars.jsx';
-import { ReviewCard, ReviewMeta, ReviewText } from './SiteReviewCard.styles.js';
+import { ReviewCard, ReviewMeta, ReviewText } from './CardAvaliacao.styles.js';
 
-export function SiteReviewCard({ review }) {
+export function CardAvaliacao({ review }) {
   return (
     <ReviewCard>
       <ReviewMeta>

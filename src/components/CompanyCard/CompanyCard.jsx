@@ -1,6 +1,6 @@
 import { memo, useRef, useState } from 'react';
 import { Icon } from '../Icon/Icon.jsx';
-import { GoogleReviews } from '../GoogleReviewsButton/GoogleReviews.jsx';
+import { BotaoAvaliacoes } from '../BotaoAvaliacoes/BotaoAvaliacoes.jsx';
 import { getCategoryIcon } from '../../utils/categoryIcons.js';
 import {
   Card,
@@ -54,7 +54,7 @@ export const CompanyCard = memo(function CompanyCard({ company }) {
           <span>{company.nome}</span>
         </CompanyName>
         <Location><Icon name="pin" />{company.local}</Location>
-        <GoogleReviews
+        <BotaoAvaliacoes
           companyName={company.nome}
           rating={company.googleRating}
           reviewCount={company.googleReviewCount}

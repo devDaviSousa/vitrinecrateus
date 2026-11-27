@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const ModalDialog = styled.dialog`
   width: min(calc(100vw - 32px), ${({ $maxWidth }) => $maxWidth});
@@ -9,15 +9,17 @@ export const ModalDialog = styled.dialog`
   border: 1px solid var(--gray-border);
   border-radius: 24px;
   background: var(--surface);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, .3);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
   color: var(--brand-gray);
 
   &::backdrop {
-    background: rgba(0, 0, 0, .56);
+    background: rgba(0, 0, 0, 0.56);
     backdrop-filter: blur(4px);
   }
 
-  @media (max-width: 380px) { padding: 20px; }
+  @media (max-width: 380px) {
+    padding: 20px;
+  }
 `;
 
 export const ModalHeader = styled.header`
@@ -37,9 +39,9 @@ export const ModalSubtitle = styled.p`
 export const ModalTitle = styled.h2`
   margin: 0;
   color: var(--brand-gray);
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 600;
-  letter-spacing: -.04em;
+  letter-spacing: -0.04em;
 `;
 
 export const ModalCloseButton = styled.button`
@@ -57,5 +59,8 @@ export const ModalCloseButton = styled.button`
   line-height: 1;
   cursor: pointer;
 
-  &:focus-visible { outline: 2px solid var(--brand-green); outline-offset: 3px; }
+  &:focus-visible {
+    outline: 2px solid var(--brand-green);
+    outline-offset: 3px;
+  }
 `;
