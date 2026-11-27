@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from 'react';
+import { memo, useState } from 'react';
 import { Icon } from '../Icon/Icon.jsx';
 import { BotaoAvaliacoes } from '../BotaoAvaliacoes/BotaoAvaliacoes.jsx';
 import { getCategoryIcon } from '../../utils/categoryIcons.js';
@@ -8,6 +8,7 @@ import {
   CompanyName,
   Content,
   Cover,
+  CoverLink,
   FollowButton,
   Footer,
   ImageFallback,
@@ -16,34 +17,26 @@ import {
 
 export const CompanyCard = memo(function CompanyCard({ company }) {
   const [imageFailed, setImageFailed] = useState(false);
-  const lastInstagramClickRef = useRef(0);
-  const instagramUrl = `https://www.instagram.com/${company.nome.replace(/^@/, '')}/`;
-
-  const handleInstagramClick = (event) => {
-    const now = Date.now();
-    if (now - lastInstagramClickRef.current < 700) {
-      event.preventDefault();
-      return;
-    }
-
-    lastInstagramClickRef.current = now;
-  };
+  const storeUrl = `/paginaLoja?companyId=${encodeURIComponent(company.id)}`;
+  const imageContent = imageFailed ? (
+    <ImageFallback aria-hidden="true">
+      {company.nome.replace(/^@/, '').slice(0, 2).toUpperCase()}
+    </ImageFallback>
+  ) : (
+    <img
+      src={company.imagem}
+      alt={`Imagem da loja ${company.nome}`}
+      loading="lazy"
+      onError={() => setImageFailed(true)}
+    />
+  );
 
   return (
     <Card>
       <Cover>
-        {imageFailed ? (
-          <ImageFallback aria-hidden="true">
-            {company.nome.replace(/^@/, '').slice(0, 2).toUpperCase()}
-          </ImageFallback>
-        ) : (
-          <img
-            src={company.imagem}
-            alt={`Imagem ilustrativa da categoria ${company.categoria.nome}`}
-            loading="lazy"
-            onError={() => setImageFailed(true)}
-          />
-        )}
+        <CoverLink href={storeUrl} aria-label={`Ver informações da loja ${company.nome}`}>
+          {imageContent}
+        </CoverLink>
         <CategoryTag>
           <Icon name={getCategoryIcon(company.categoria.nome)} size={14} />
           {company.categoria.nome}
@@ -61,11 +54,8 @@ export const CompanyCard = memo(function CompanyCard({ company }) {
         />
         <Footer>
           <FollowButton
-            href={instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleInstagramClick}
-            aria-label={`Abrir o Instagram de ${company.nome}`}
+            href={storeUrl}
+            aria-label={`Abrir a página da loja ${company.nome}`}
           >
             Conhecer
             <Icon name="arrow" size={17} />

@@ -52,6 +52,18 @@ export const Cover = styled.div`
   }
 `;
 
+export const CoverLink = styled.a`
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+
+  &:focus-visible {
+    outline: 3px solid var(--brand-green);
+    outline-offset: -3px;
+  }
+`;
+
 export const ImageFallback = styled.div`
   display: grid;
   width: 100%;
