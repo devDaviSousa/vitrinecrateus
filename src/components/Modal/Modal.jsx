@@ -15,6 +15,7 @@ export function Modal({
   children,
   maxWidth = '420px',
   ariaLabel = 'Janela modal',
+  hideScrollbar = false,
 }) {
   const dialogRef = useRef(null);
   const titleId = useId();
@@ -32,6 +33,7 @@ export function Modal({
     <ModalDialog
       ref={dialogRef}
       $maxWidth={maxWidth}
+      $hideScrollbar={hideScrollbar}
       aria-labelledby={title ? titleId : undefined}
       aria-label={title ? undefined : ariaLabel}
       onClose={onClose}

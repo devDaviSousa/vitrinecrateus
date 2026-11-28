@@ -23,6 +23,7 @@ export const CategoryCarousel = memo(function CategoryCarousel({
   selectedCategory,
   onCategoryChange,
   isSearching = false,
+  isLoading = false,
 }) {
   const scrollerRef = useRef(null);
   const buttonRefs = useRef(new Map());
@@ -60,7 +61,7 @@ export const CategoryCarousel = memo(function CategoryCarousel({
       scroller.removeEventListener('scroll', updateNavigation);
       window.removeEventListener('resize', updateNavigation);
     };
-  }, [categories.length]);
+  }, [categories]);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -221,7 +222,7 @@ export const CategoryCarousel = memo(function CategoryCarousel({
       <Header>
         <SectionTitle>Categorias</SectionTitle>
         <Navigation>
-          <span>{categories.length - 1} opções</span>
+          <span>{isLoading ? 'Carregando...' : `${categories.length - 1} opções`}</span>
           <NavigationButton
             type="button"
             aria-label="Categorias anteriores"

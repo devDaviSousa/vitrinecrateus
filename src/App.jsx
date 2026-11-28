@@ -1,4 +1,5 @@
 import { useTheme } from './hooks/useTheme/useTheme.js';
+import Admin from './pages/Admin/Admin.jsx';
 import Home from './pages/Home/Home.jsx';
 import PaginaLoja from './pages/PaginaLoja/PaginaLoja.jsx';
 
@@ -9,6 +10,10 @@ export default function App() {
 
   if (path === '/paginaloja' || path === '/loja') {
     return <PaginaLoja companyId={searchParams.get('companyId')} />;
+  }
+
+  if (path === '/admin' || path === '/painel-admin') {
+    return <Admin theme={theme} toggleTheme={toggleTheme} />;
   }
 
   return <Home theme={theme} toggleTheme={toggleTheme} />;

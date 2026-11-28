@@ -3,10 +3,13 @@ import { CategoryCarousel } from '../../components/CategoryCarousel/CategoryCaro
 import { CompanyGrid } from '../../components/CompanyGrid/CompanyGrid.jsx';
 import { Icon } from '../../components/Icon/Icon.jsx';
 import { ThemeToggle } from '../../components/ThemeToggle/ThemeToggle.jsx';
+import { useCategoriasDeServico } from '../../hooks/useCategoriasDeServico/useCategoriasDeServico.js';
 import { useServicos } from '../../hooks/useServicos/useServicos.js';
+import { resolveServiceLogo } from '../../services/api.js';
 
 import {
   Brand,
+  CategoryLoadError,
   Intro,
   LoadMoreButton,
   Page,
@@ -37,26 +40,61 @@ function findCategoryByPrefix(value, categorySearchIndex) {
 
 export default function Home({ theme, toggleTheme }) {
   const { data, isLoading, error, refetch } = useServicos();
+  const {
+    data: categoryData,
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+    refetch: refetchCategories,
+  } = useCategoriasDeServico();
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todas');
   const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
 
-  const companies = useMemo(() => data.map((servico) => ({
-    id: servico.id,
-    nome: servico.nome,
-    categoria: {
-      id: servico.categoriaDeServico?.id ?? servico.categoria,
-      nome: servico.categoriaDeServico?.nome || 'Sem categoria',
-    },
-    local: [
-      [servico.rua, servico.numerodoendereco].filter(Boolean).join(', '),
-      [servico.bairro, servico.cidade].filter(Boolean).join(', '),
-    ].filter(Boolean).join(' · ') || 'Localização não informada',
-    imagem: servico.logo,
-  })), [data]);
-  const categories = useMemo(
-    () => ['Todas', ...new Set(companies.map((company) => company.categoria.nome))],
+  const categoryById = useMemo(
+    () => new Map(categoryData
+      .filter((category) => category?.id != null)
+      .map((category) => [String(category.id), category])),
+    [categoryData],
+  );
+  const companies = useMemo(() => data.map((servico) => {
+    const serviceCategory = servico.categoriaDeServico
+      ?? (typeof servico.categoria === 'object' ? servico.categoria : null);
+    const categoryId = serviceCategory?.id ?? servico.categoria;
+    const category = (serviceCategory?.nome
+      ? serviceCategory
+      : categoryById.get(String(categoryId)));
+
+    return {
+      id: servico.id,
+      nome: servico.nome,
+      categoria: {
+        id: category?.id ?? categoryId,
+        nome: category?.nome?.trim() || 'Sem categoria',
+      },
+      local: [
+        [servico.rua, servico.numerodoendereco].filter(Boolean).join(', '),
+        [servico.bairro, servico.cidade].filter(Boolean).join(', '),
+      ].filter(Boolean).join(' · ') || 'Localização não informada',
+      imagem: resolveServiceLogo(servico.logo),
+    };
+  }), [categoryById, data]);
+  const serviceCategoryIds = useMemo(
+    () => new Set(companies
+      .map((company) => company.categoria.id)
+      .filter((id) => id != null)
+      .map(String)),
     [companies],
+  );
+  const categories = useMemo(
+    () => ['Todas', ...new Set(categoryData
+      .filter((category) => (
+        category?.id != null
+        && serviceCategoryIds.has(String(category.id))
+        && typeof category.nome === 'string'
+        && category.nome.trim()
+      ))
+      .map((category) => category.nome.trim()))],
+    [categoryData, serviceCategoryIds],
   );
   const categorySearchIndex = useMemo(
     () => categories
@@ -75,6 +113,17 @@ export default function Home({ theme, toggleTheme }) {
   useEffect(() => {
     setVisibleLimit(PAGE_SIZE);
   }, [query, activeCategory]);
+
+  useEffect(() => {
+    if (
+      !isCategoriesLoading
+      && !categoriesError
+      && activeCategory !== 'Todas'
+      && !categories.includes(activeCategory)
+    ) {
+      setActiveCategory('Todas');
+    }
+  }, [activeCategory, categories, categoriesError, isCategoriesLoading]);
 
   const handleSearchChange = (value) => {
     setQuery(value);
@@ -126,7 +175,18 @@ export default function Home({ theme, toggleTheme }) {
           selectedCategory={activeCategory}
           onCategoryChange={handleCategoryChange}
           isSearching={Boolean(query.trim())}
+          isLoading={isCategoriesLoading || isLoading}
         />
+
+        {categoriesError && (
+          <CategoryLoadError role="alert">
+            <span>
+              Não foi possível carregar as categorias.{' '}
+              {typeof categoriesError.message === 'string' ? categoriesError.message : 'Tente novamente.'}
+            </span>
+            <button type="button" onClick={refetchCategories}>Tentar novamente</button>
+          </CategoryLoadError>
+        )}
 
         {!isLoading && !error && (
           <ResultLine>

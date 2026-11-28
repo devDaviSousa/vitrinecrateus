@@ -12,6 +12,14 @@ export const ModalDialog = styled.dialog`
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
   color: var(--brand-gray);
 
+  ${({ $hideScrollbar }) => $hideScrollbar && `
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  `}
+
   &::backdrop {
     background: rgba(0, 0, 0, 0.56);
     backdrop-filter: blur(4px);

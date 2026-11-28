@@ -2,20 +2,19 @@ import styled from "styled-components";
 
 export const Page = styled.main`
   min-height: 100vh;
-  padding: 38px 28px 64px;
+  padding: 38px 28px 112px;
   background:
     radial-gradient(ellipse at 50% -22%, var(--page-glow), transparent 50%),
     var(--page-background);
   transition: background-color 180ms ease;
 
   @media (max-width: 600px) {
-    padding: 18px 16px 44px;
+    padding: 18px 16px 104px;
   }
   @media (max-width: 600px) and (max-height: 700px) {
     padding-top: 12px;
   }
 `;
-
 export const Shell = styled.div`
   width: min(100%, 1120px);
   margin: 0 auto;
@@ -170,6 +169,33 @@ export const ResultLine = styled.div`
 
   @media (max-width: 600px) and (max-height: 700px) {
     margin-bottom: 5px;
+  }
+`;
+
+export const CategoryLoadError = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -16px 1px 18px;
+  color: var(--gray-muted);
+  font-size: 13px;
+
+  button {
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--brand-green);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  @media (max-width: 520px) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
   }
 `;
 

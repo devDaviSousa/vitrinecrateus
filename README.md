@@ -53,7 +53,19 @@ Crie um arquivo `.env` na raiz usando `.env.example` como referência:
 VITE_API_BASE_URL=http://localhost:3333
 ```
 
-A tela inicial consulta `GET /servicos`. O hook `useServicos` controla os dados, o carregamento, os erros e a função `refetch`; o `CompanyGrid` apresenta os resultados e permite tentar novamente quando a chamada falha.
+A tela inicial consulta `GET /servicos` para montar os resultados e `GET /categorias-de-servico` para listar somente categorias com serviços relacionados e filtrar os resultados. O hook `useServicos` controla os dados, o carregamento, os erros e a função `refetch`; o `CompanyGrid` apresenta os resultados e permite tentar novamente quando a chamada falha. Se não for possível carregar as categorias, a interface informa o erro e permite tentar novamente.
+
+Ao abrir um card, a página de informações consulta `GET /servicos/:id` e exibe os dados do serviço correspondente, incluindo categoria, logo, endereço e links de contato.
+
+O cadastro usa `GET /categorias-de-servico` para preencher as categorias e envia `POST /servicos` como `multipart/form-data`. O campo `categoria` recebe o ID de uma categoria existente; os dados de contato são enviados individualmente (`site`, `instagram`, `facebook`, `whatsapp`, `linkedin`). Cidade, rua, bairro, número e contatos opcionais vazios são omitidos.
+
+A logo pode ser um arquivo PNG, JPG ou SVG de até 5 MB e é enviada no campo `logo`. O envio usa `FormData` sem definir `Content-Type` manualmente, para que o navegador inclua o `boundary`. A API retorna caminhos como `/uploads/servicos/<arquivo>`; o front-end os converte em URL completa usando a URL base da API para exibir a imagem. Em produção, configure `storage/uploads` como volume persistente ou use armazenamento de objetos.
+
+O formulário permite omitir o endereço e exibe erros de validação retornados pela API sem indicar sucesso quando o cadastro falha.
+
+Para informar uma categoria nova, o painel verifica se o nome já existe e envia `POST /categorias-de-servico` com `{ "nome": "..." }`. Após a atualização da lista, selecione essa categoria; o serviço é cadastrado com o ID em `categoria`.
+
+O painel de gerenciamento fica disponível em `/admin`, com formulários separados para criar categorias e serviços. A rota ainda não possui autenticação; para restringir cadastros a administradores, a API também precisa validar a identidade e as permissões do usuário.
 
 Se o navegador bloquear a chamada por CORS quando o front-end e a API usam portas diferentes, habilite CORS na API para permitir a origem do Vite (por padrão, `http://localhost:5173`). Em uma API Express, por exemplo, configure o middleware CORS no servidor antes das rotas:
 

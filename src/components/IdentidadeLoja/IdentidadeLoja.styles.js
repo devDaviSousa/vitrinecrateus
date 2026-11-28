@@ -32,6 +32,26 @@ export const StoreLogo = styled.img`
   }
 `;
 
+export const StoreLogoFallback = styled.div`
+  display: grid;
+  width: 242px;
+  height: 242px;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--gray-soft), var(--surface));
+  color: var(--gray-muted);
+  font-size: 54px;
+  font-weight: 600;
+  letter-spacing: -0.09em;
+
+  @media (min-width: 761px) {
+    width: 100px;
+    height: 100px;
+    font-size: 28px;
+  }
+`;
+
 export const StoreName = styled.h2`
   text-align: center;
   margin: 12px 2px 0;
@@ -56,4 +76,11 @@ export const StoreCategory = styled.p`
   @media (min-width: 761px) {
     font-size: 14px;
   }
+`;
+
+export const StoreLocation = styled.p`
+  margin: 6px 2px 0;
+  color: var(--gray-muted);
+  font-size: 14px;
+  text-align: center;
 `;

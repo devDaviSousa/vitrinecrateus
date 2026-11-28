@@ -14,6 +14,8 @@ import {
 } from './LinksLoja.styles.js';
 
 export function LinksLoja({ website, socialNetworks }) {
+  const hasLinks = Boolean(website.href || socialNetworks.some((network) => network.href));
+
   return (
     <ContactSection>
       <SectionTitle>Visite nosso site</SectionTitle>
@@ -48,7 +50,7 @@ export function LinksLoja({ website, socialNetworks }) {
           </NetworkRow>
         ))}
       </NetworkList>
-      <ContactHint>Adicione os links das redes oficiais da loja.</ContactHint>
+      {!hasLinks && <ContactHint>Adicione os links das redes oficiais da loja.</ContactHint>}
     </ContactSection>
   );
 }
