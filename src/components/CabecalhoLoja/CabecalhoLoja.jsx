@@ -1,4 +1,5 @@
 import { Icon } from '../Icon/Icon.jsx';
+import { AccountAccess } from '../AccountAccess/AccountAccess.jsx';
 import { BackLink, HeaderTitle, StoreHeader } from './CabecalhoLoja.styles.js';
 
 export function CabecalhoLoja({ backHref = '/' }) {
@@ -8,7 +9,7 @@ export function CabecalhoLoja({ backHref = '/' }) {
         <Icon name="chevronDown" size={28} />
       </BackLink>
       <HeaderTitle>Informações da loja</HeaderTitle>
-      <span aria-hidden="true" />
+      <AccountAccess />
     </StoreHeader>
   );
 }

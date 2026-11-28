@@ -80,11 +80,13 @@ Ao abrir um card, a página de informações consulta `GET /servicos/:id` e exib
 
 ### Cadastro, login e classificação
 
-As telas `/cadastro` e `/login` usam `POST /users` e `POST /auth/login`. O cadastro envia `name`, `email`, `password` e `provider: false`; a senha precisa ter entre 8 e 72 bytes. O login guarda o token Bearer recebido em `sessionStorage`, e o cliente Axios o envia automaticamente no cabeçalho `Authorization` das requisições.
+As telas `/cadastro` e `/login` usam `POST /users` e `POST /auth/login`. O cadastro envia `name`, `email`, `password` e `provider: false`; a senha precisa ter entre 8 e 72 bytes. O login guarda o token Bearer e os dados públicos do usuário em `sessionStorage`, e o cliente Axios envia o token automaticamente no cabeçalho `Authorization` das requisições.
 
 `GET /servicos` e `GET /servicos/:id` incluem `classificacao` com `media` e `quantidade`. O botão de classificação exibe esses dados e, quando há uma sessão, consulta `GET /servicos/:id/avaliacao` para mostrar a nota do usuário. O envio usa `PUT /servicos/:id/avaliacao` com `{ "nota": 5 }`; o backend cria ou atualiza a nota e retorna a classificação atualizada.
 
 Sem uma sessão, a interface encaminha para `/login`; depois do login, retorna à página de origem. O acesso é limitado a notas inteiras de 1 a 5, uma por usuário e serviço. A tela não solicita nem envia comentários de texto, pois a API de classificação aceita somente uma nota.
+
+O link de conta no cabeçalho abre `/perfil`, onde a pessoa vê nome e e-mail da sessão e pode sair. Como a API não oferece endpoint de logout/revogação, sair remove token e perfil do `sessionStorage`; o token também é removido localmente quando expira.
 
 O cadastro usa `GET /categorias-de-servico` para preencher as categorias e envia `POST /servicos` como `multipart/form-data`. O campo `categoria` recebe o ID de uma categoria existente; os dados de contato são enviados individualmente (`site`, `instagram`, `facebook`, `whatsapp`, `linkedin`). Cidade, rua, bairro, número e contatos opcionais vazios são omitidos.
 
@@ -130,6 +132,7 @@ src/
 │   ├── icons/                 # Cada ícone SVG em sua própria pasta
 │   └── logos/                 # Imagens locais usadas nos cards
 ├── components/
+│   ├── AccountAccess/         # Atalho para login ou perfil da conta
 │   ├── CategoryCarousel/      # Carrossel e estilos das categorias
 │   ├── CompanyCard/           # Card individual e estilos
 │   ├── CompanyGrid/           # Grade e estado vazio
@@ -139,8 +142,10 @@ src/
 │   ├── Modal/                 # Diálogos acessíveis
 │   └── ThemeToggle/           # Botão para alternar o tema
 ├── services/
-│   ├── api.js                 # Cliente Axios e URL base
-│   └── servicosService.js     # Requisições de serviços e categorias
+│   ├── api.js                 # Cliente Axios, token e dados da sessão
+│   ├── authService.js         # Cadastro e login
+│   ├── avaliacoesService.js  # Consulta e gravação da nota do usuário
+│   └── servicosService.js    # Requisições de serviços e categorias
 ├── hooks/
 │   ├── useCategoriasDeServico/ # Categorias, carregamento, erro e refetch
 │   ├── useServicos/           # Serviços, carregamento, erro e refetch
@@ -150,8 +155,10 @@ src/
 │   └── paginaLoja.js          # Conteúdo de fallback da página de loja
 ├── pages/
 │   ├── Admin/                 # Painel de criação de categorias e serviços
+│   ├── Auth/                  # Cadastro e login
 │   ├── Home/                  # Catálogo, busca e filtros
-│   └── PaginaLoja/            # Detalhes do serviço selecionado
+│   ├── PaginaLoja/            # Detalhes do serviço selecionado
+│   └── Profile/               # Perfil e saída da conta
 ├── styles/
 │   └── GlobalStyle.js         # Reset, fontes e variáveis de tema
 └── utils/
@@ -191,6 +198,7 @@ Os dados da API são adaptados ao modelo consumido por `CompanyCard`. Logos reto
 - **`CompanyCard`** direciona a imagem e o botão para `/paginaLoja?companyId=<id>` usando o ID da API; a página consulta `GET /servicos/:id`.
 - **`Admin`** apresenta formulários separados para criar categorias e serviços em `/admin`.
 - **`Auth`** oferece cadastro em `/cadastro` e login em `/login` para o fluxo de classificação.
+- **`AccountAccess`** leva ao login ou ao perfil conforme a sessão; **`Profile`** exibe os dados da conta e permite sair.
 - **`FormularioCategoria`** envia novas categorias para `POST /categorias-de-servico`.
 - **`FormularioServico`** envia os dados do serviço e a logo via `FormData` para `POST /servicos`.
 - **`useTheme`** aplica o tema no documento e guarda a escolha com a chave `vitrine-theme` no `localStorage`.

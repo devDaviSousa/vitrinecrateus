@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AccountAccess } from '../../components/AccountAccess/AccountAccess.jsx';
 import { CategoryCarousel } from '../../components/CategoryCarousel/CategoryCarousel.jsx';
 import { CompanyGrid } from '../../components/CompanyGrid/CompanyGrid.jsx';
 import { Icon } from '../../components/Icon/Icon.jsx';
@@ -158,6 +159,7 @@ export default function Home({ theme, toggleTheme }) {
             <span className="brand-mark" aria-hidden="true">.vc</span>
             <span className="brand-name">Vitrine Crateús</span>
           </Brand>
+          <AccountAccess positioned />
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </Topbar>
         <SearchBox>

@@ -3,6 +3,7 @@ import Admin from './pages/Admin/Admin.jsx';
 import Auth from './pages/Auth/Auth.jsx';
 import Home from './pages/Home/Home.jsx';
 import PaginaLoja from './pages/PaginaLoja/PaginaLoja.jsx';
+import Profile from './pages/Profile/Profile.jsx';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -23,6 +24,10 @@ export default function App() {
 
   if (path === '/cadastro') {
     return <Auth initialMode="register" />;
+  }
+
+  if (path === '/perfil' || path === '/profile') {
+    return <Profile />;
   }
 
   return <Home theme={theme} toggleTheme={toggleTheme} />;

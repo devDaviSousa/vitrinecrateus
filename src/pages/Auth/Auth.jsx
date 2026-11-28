@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loginUser, registerUser } from '../../services/authService.js';
-import { saveAccessToken } from '../../services/api.js';
+import { saveAuthSession } from '../../services/api.js';
 import {
   AuthCard,
   AuthDescription,
@@ -61,7 +61,7 @@ export default function Auth({ initialMode = 'login' }) {
       }
 
       const session = await loginUser({ email: email.trim(), password });
-      saveAccessToken(session.token);
+      saveAuthSession(session);
       window.location.assign(returnTo);
     } catch (requestError) {
       setErrorMessage(getErrorMessage(requestError));

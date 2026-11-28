@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const StoreHeader = styled.header`
   display: grid;
-  grid-template-columns: 32px 1fr 32px;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
   align-items: center;
   min-height: 36px;
   margin-bottom: 20px;
