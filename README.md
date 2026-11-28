@@ -1,18 +1,38 @@
 # Vitrine Crateús
 
-> Um catálogo leve e responsivo para descobrir empresas e serviços de Crateús, CE.
+> Um catálogo responsivo para descobrir empresas e serviços de Crateús, CE.
 
-Encontre uma categoria, pesquise por nome ou cidade e abra o Instagram da empresa escolhida. A interface foi pensada primeiro para smartphones, com cards visuais, navegação por categorias e tema noturno.
+Explore os serviços por categoria, consulte as informações de cada negócio e acesse seus canais de contato. A interface funciona em celulares e desktops e oferece tema claro e noturno.
 
 ## ✨ O que o projeto oferece
 
-- **Busca rápida:** filtra empresas por nome, categoria ou cidade, sem diferenciar acentos ou maiúsculas.
-- **Categorias com ícones:** navegue pelo carrossel usando toque, arraste com o mouse ou os botões de navegação.
+- **Categorias dinâmicas:** carrega as categorias da API e mostra apenas aquelas relacionadas a serviços cadastrados.
+- **Busca e filtros:** encontre categorias digitando seu nome ou selecionando-as nos filtros.
+- **Navegação por categorias:** use toque, arraste com o mouse ou os botões de navegação do carrossel.
 - **Resultados progressivos:** a página mostra 24 empresas por vez e permite carregar mais resultados.
-- **Cards de empresa:** exibem imagem, categoria, nome, localização e resumo de avaliações. A imagem e o botão abrem a página da loja selecionada; o resumo abre um diálogo com as avaliações.
+- **Detalhes da loja:** os cards abrem as informações do serviço selecionado, com categoria, logo, endereço e links de contato.
+- **Avaliações:** os cards exibem um resumo e permitem consultar as avaliações em um diálogo.
 - **Tema claro e noturno:** alterne pelo botão no cabeçalho; a preferência fica salva no navegador.
-- **Layout responsivo:** grade de cards e controles se adaptam a celulares, tablets e telas maiores.
+- **Painel administrativo:** a rota `/admin` separa o cadastro de categorias do cadastro de serviços.
+- **Upload de logos:** aceita imagens PNG, JPG e SVG de até 5 MB.
+- **Layout responsivo:** catálogo, detalhes e painel se adaptam a celulares e telas maiores.
 - **Acessibilidade básica:** controles possuem rótulos acessíveis e estados de foco visíveis.
+
+## 🖼️ Capturas de tela
+
+As imagens abaixo mostram o catálogo, os detalhes de uma loja e o painel administrativo em telas móveis e desktop.
+
+| Home — celular | Home — desktop |
+| --- | --- |
+| ![Home em celular](docs/screenshots/home-mobile.png) | ![Home em desktop](docs/screenshots/home-desktop.png) |
+
+| Detalhes da loja — celular | Detalhes da loja — desktop |
+| --- | --- |
+| ![Detalhes da loja em celular](docs/screenshots/store-mobile.png) | ![Detalhes da loja em desktop](docs/screenshots/store-desktop.png) |
+
+### Painel administrativo
+
+![Painel administrativo em desktop](docs/screenshots/admin-desktop.png)
 
 ## 🧰 Tecnologias
 
@@ -104,23 +124,32 @@ src/
 │   ├── CategoryCarousel/      # Carrossel e estilos das categorias
 │   ├── CompanyCard/           # Card individual e estilos
 │   ├── CompanyGrid/           # Grade e estado vazio
+│   ├── FormularioCategoria/   # Cadastro independente de categorias
+│   ├── FormularioServico/     # Cadastro de serviços e upload de logo
 │   ├── Icon/                  # Seletor central de ícones
-│   └── ThemeToggle/            # Botão para alternar o tema
+│   ├── Modal/                 # Diálogos acessíveis
+│   └── ThemeToggle/           # Botão para alternar o tema
 ├── services/
-│   ├── api.js                  # Cliente Axios e URL base
-│   └── servicosService.js      # Requisições de serviços
+│   ├── api.js                 # Cliente Axios e URL base
+│   └── servicosService.js     # Requisições de serviços e categorias
 ├── hooks/
-│   ├── useServicos/            # Dados, carregamento, erro e refetch
-│   └── useTheme/               # Estado e persistência do tema
+│   ├── useCategoriasDeServico/ # Categorias, carregamento, erro e refetch
+│   ├── useServicos/           # Serviços, carregamento, erro e refetch
+│   └── useTheme/              # Estado e persistência do tema
 ├── data/
-│   ├── companies.js            # Dados usados pela página de loja existente
-│   └── paginaLoja.js           # Conteúdo estático da página de loja
+│   ├── companies.js           # Dados de fallback da loja
+│   └── paginaLoja.js          # Conteúdo de fallback da página de loja
 ├── pages/
-│   └── Home/                   # Tela inicial e estilos da página
+│   ├── Admin/                 # Painel de criação de categorias e serviços
+│   ├── Home/                  # Catálogo, busca e filtros
+│   └── PaginaLoja/            # Detalhes do serviço selecionado
 ├── styles/
-│   └── GlobalStyle.js          # Reset, fontes e variáveis de tema
+│   └── GlobalStyle.js         # Reset, fontes e variáveis de tema
 └── utils/
-    └── categoryIcons.js        # Relação entre categoria e ícone
+    └── categoryIcons.js       # Relação entre categoria e ícone
+
+docs/
+└── screenshots/               # Capturas de telas mobile e desktop
 ```
 
 Os componentes visuais ficam em pastas próprias. Quando há estilos específicos, o arquivo `.styles.js` acompanha o componente `.jsx`. A tela inicial adapta os campos de `/servicos` (`nome`, `categoriaDeServico`, `rua`, `numerodoendereco`, `bairro`, `cidade` e `logo`) ao formato usado pelos cards.
@@ -136,19 +165,23 @@ A tela inicial consome os serviços de `GET /servicos`. A API retorna registros 
   categoria: 2,
   cidade: 'Crateús',
   bairro: 'Centro',
-  logo: 'https://exemplo.com/logo.png',
+  numerodoendereco: '123',
+  logo: '/uploads/servicos/logo.jpg',
   categoriaDeServico: { id: 2, nome: 'Açaí' }
 }
 ```
 
-Os dados da API são adaptados ao modelo consumido por `CompanyCard`. Uma imagem ausente ou indisponível exibe as iniciais do serviço.
+Os dados da API são adaptados ao modelo consumido por `CompanyCard`. Logos retornadas em caminhos como `/uploads/servicos/<arquivo>` são resolvidas contra a URL base da API. Uma imagem ausente ou indisponível exibe as iniciais do serviço.
 
 ## 🧭 Organização da interface
 
 - **`Home`** prepara a busca, as categorias selecionadas e a quantidade de resultados visíveis.
 - **`CategoryCarousel`** apresenta os ícones definidos em `categoryIcons.js` e notifica a página quando a seleção muda.
 - **`CompanyGrid`** recebe a lista filtrada e monta um `CompanyCard` para cada empresa.
-- **`CompanyCard`** direciona a imagem e o botão para a página da loja usando o ID local da empresa.
+- **`CompanyCard`** direciona a imagem e o botão para `/paginaLoja?companyId=<id>` usando o ID da API; a página consulta `GET /servicos/:id`.
+- **`Admin`** apresenta formulários separados para criar categorias e serviços em `/admin`.
+- **`FormularioCategoria`** envia novas categorias para `POST /categorias-de-servico`.
+- **`FormularioServico`** envia os dados do serviço e a logo via `FormData` para `POST /servicos`.
 - **`useTheme`** aplica o tema no documento e guarda a escolha com a chave `vitrine-theme` no `localStorage`.
 - **`GlobalStyle`** define as cores base e as variáveis para os modos claro e noturno.
 
