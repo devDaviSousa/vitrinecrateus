@@ -76,6 +76,7 @@ export default function Home({ theme, toggleTheme }) {
         [servico.bairro, servico.cidade].filter(Boolean).join(', '),
       ].filter(Boolean).join(' · ') || 'Localização não informada',
       imagem: resolveServiceLogo(servico.logo),
+      classificacao: servico.classificacao,
     };
   }), [categoryById, data]);
   const serviceCategoryIds = useMemo(

@@ -11,7 +11,8 @@ Explore os serviços por categoria, consulte as informações de cada negócio e
 - **Navegação por categorias:** use toque, arraste com o mouse ou os botões de navegação do carrossel.
 - **Resultados progressivos:** a página mostra 24 empresas por vez e permite carregar mais resultados.
 - **Detalhes da loja:** os cards abrem as informações do serviço selecionado, com categoria, logo, endereço e links de contato.
-- **Avaliações:** os cards exibem um resumo e permitem consultar as avaliações em um diálogo.
+- **Classificação:** os cards e a página do serviço exibem média e quantidade de notas; usuários autenticados podem registrar ou atualizar uma nota de 1 a 5.
+- **Conta de usuário:** cadastro e login permitem acessar o fluxo de classificação; o token da sessão fica no `sessionStorage`.
 - **Tema claro e noturno:** alterne pelo botão no cabeçalho; a preferência fica salva no navegador.
 - **Painel administrativo:** a rota `/admin` separa o cadastro de categorias do cadastro de serviços.
 - **Upload de logos:** aceita imagens PNG, JPG e SVG de até 5 MB.
@@ -76,6 +77,14 @@ VITE_API_BASE_URL=http://localhost:3333
 A tela inicial consulta `GET /servicos` para montar os resultados e `GET /categorias-de-servico` para listar somente categorias com serviços relacionados e filtrar os resultados. O hook `useServicos` controla os dados, o carregamento, os erros e a função `refetch`; o `CompanyGrid` apresenta os resultados e permite tentar novamente quando a chamada falha. Se não for possível carregar as categorias, a interface informa o erro e permite tentar novamente.
 
 Ao abrir um card, a página de informações consulta `GET /servicos/:id` e exibe os dados do serviço correspondente, incluindo categoria, logo, endereço e links de contato.
+
+### Cadastro, login e classificação
+
+As telas `/cadastro` e `/login` usam `POST /users` e `POST /auth/login`. O cadastro envia `name`, `email`, `password` e `provider: false`; a senha precisa ter entre 8 e 72 bytes. O login guarda o token Bearer recebido em `sessionStorage`, e o cliente Axios o envia automaticamente no cabeçalho `Authorization` das requisições.
+
+`GET /servicos` e `GET /servicos/:id` incluem `classificacao` com `media` e `quantidade`. O botão de classificação exibe esses dados e, quando há uma sessão, consulta `GET /servicos/:id/avaliacao` para mostrar a nota do usuário. O envio usa `PUT /servicos/:id/avaliacao` com `{ "nota": 5 }`; o backend cria ou atualiza a nota e retorna a classificação atualizada.
+
+Sem uma sessão, a interface encaminha para `/login`; depois do login, retorna à página de origem. O acesso é limitado a notas inteiras de 1 a 5, uma por usuário e serviço. A tela não solicita nem envia comentários de texto, pois a API de classificação aceita somente uma nota.
 
 O cadastro usa `GET /categorias-de-servico` para preencher as categorias e envia `POST /servicos` como `multipart/form-data`. O campo `categoria` recebe o ID de uma categoria existente; os dados de contato são enviados individualmente (`site`, `instagram`, `facebook`, `whatsapp`, `linkedin`). Cidade, rua, bairro, número e contatos opcionais vazios são omitidos.
 
@@ -167,7 +176,8 @@ A tela inicial consome os serviços de `GET /servicos`. A API retorna registros 
   bairro: 'Centro',
   numerodoendereco: '123',
   logo: '/uploads/servicos/logo.jpg',
-  categoriaDeServico: { id: 2, nome: 'Açaí' }
+  categoriaDeServico: { id: 2, nome: 'Açaí' },
+  classificacao: { media: 4.7, quantidade: 12 }
 }
 ```
 
@@ -180,6 +190,7 @@ Os dados da API são adaptados ao modelo consumido por `CompanyCard`. Logos reto
 - **`CompanyGrid`** recebe a lista filtrada e monta um `CompanyCard` para cada empresa.
 - **`CompanyCard`** direciona a imagem e o botão para `/paginaLoja?companyId=<id>` usando o ID da API; a página consulta `GET /servicos/:id`.
 - **`Admin`** apresenta formulários separados para criar categorias e serviços em `/admin`.
+- **`Auth`** oferece cadastro em `/cadastro` e login em `/login` para o fluxo de classificação.
 - **`FormularioCategoria`** envia novas categorias para `POST /categorias-de-servico`.
 - **`FormularioServico`** envia os dados do serviço e a logo via `FormData` para `POST /servicos`.
 - **`useTheme`** aplica o tema no documento e guarda a escolha com a chave `vitrine-theme` no `localStorage`.

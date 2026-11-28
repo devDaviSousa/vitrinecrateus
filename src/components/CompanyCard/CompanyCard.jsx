@@ -47,7 +47,11 @@ export const CompanyCard = memo(function CompanyCard({ company }) {
           <span>{company.nome}</span>
         </CompanyName>
         <Location><Icon name="pin" />{company.local}</Location>
-        <BotaoAvaliacoes companyName={company.nome} />
+        <BotaoAvaliacoes
+          serviceId={company.id}
+          companyName={company.nome}
+          classification={company.classificacao}
+        />
         <Footer>
           <FollowButton
             href={storeUrl}

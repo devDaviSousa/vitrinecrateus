@@ -17,37 +17,6 @@ export const FormLabel = styled.label`
   font-weight: 600;
 `;
 
-const formControlStyles = `
-  width: 100%;
-  border: 1px solid var(--gray-border);
-  border-radius: 12px;
-  background: var(--page-background);
-  color: var(--brand-gray);
-  font: inherit;
-  font-size: 15px;
-
-  &:focus { outline: 2px solid var(--brand-green); outline-offset: 2px; }
-  &::placeholder { color: var(--gray-muted); }
-`;
-
-export const FormInput = styled.input`
-  ${formControlStyles}
-  min-height: 44px;
-  padding: 10px 12px;
-`;
-
-export const FormTextarea = styled.textarea`
-  ${formControlStyles}
-  min-height: 110px;
-  padding: 12px;
-  resize: vertical;
-`;
-
-export const FormError = styled.span`
-  color: var(--gray-muted);
-  font-size: 13px;
-`;
-
 export const RatingChoices = styled.div`
   display: flex;
   align-items: center;
@@ -108,5 +77,10 @@ export const SubmitReviewButton = styled.button`
   &:focus-visible {
     outline: 3px solid var(--brand-green);
     outline-offset: 3px;
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.65;
   }
 `;

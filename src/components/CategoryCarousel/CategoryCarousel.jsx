@@ -34,7 +34,6 @@ export const CategoryCarousel = memo(function CategoryCarousel({
   const suppressClickUntilRef = useRef(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -43,7 +42,6 @@ export const CategoryCarousel = memo(function CategoryCarousel({
     const updateNavigation = () => {
       const nextCanScrollLeft = scroller.scrollLeft > 2;
       const nextCanScrollRight = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 2;
-      setHasScrolled(nextCanScrollLeft);
       const previous = navigationStateRef.current;
 
       if (previous.left !== nextCanScrollLeft || previous.right !== nextCanScrollRight) {
@@ -217,6 +215,8 @@ export const CategoryCarousel = memo(function CategoryCarousel({
     }
   };
 
+  const compactAllCategories = isSearching || selectedCategory !== 'Todas';
+
   return (
     <Carousel>
       <Header>
@@ -248,7 +248,7 @@ export const CategoryCarousel = memo(function CategoryCarousel({
             data-category="Todas"
             type="button"
             $selected={selectedCategory === 'Todas'}
-            $compact={isSearching || hasScrolled}
+            $compact={compactAllCategories}
             aria-label="Todas as categorias"
             aria-pressed={selectedCategory === 'Todas'}
             onClick={handleCategoryClick}
@@ -256,7 +256,7 @@ export const CategoryCarousel = memo(function CategoryCarousel({
             <CategoryIcon $selected={selectedCategory === 'Todas'}>
               <Icon name={getCategoryIcon('Todas')} size={17} />
             </CategoryIcon>
-            <CategoryName $compact={isSearching || hasScrolled} title={getLabel('Todas')}>
+            <CategoryName $compact={compactAllCategories} title={getLabel('Todas')}>
               {getLabel('Todas')}
             </CategoryName>
           </CategoryButton>

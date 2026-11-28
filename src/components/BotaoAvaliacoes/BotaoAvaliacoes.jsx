@@ -3,31 +3,22 @@ import { ModalAvaliacao } from '../ModalAvaliacao/ModalAvaliacao.jsx';
 import { RatingStars, ratingFormatter } from '../RatingStars/RatingStars.jsx';
 import { Rating } from '../RatingStars/RatingStars.styles.js';
 import { ReviewCount, ReviewSummary } from './BotaoAvaliacoes.styles.js';
-import {
-  getSiteReviewSummary,
-  getSiteReviewsStorageKey,
-  loadSiteReviews,
-} from '../../utils/siteReviews.js';
 
-export function BotaoAvaliacoes({ companyName }) {
+const emptyClassification = { media: null, quantidade: 0 };
+
+export function BotaoAvaliacoes({ serviceId, companyName, classification }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [siteReviews, setSiteReviews] = useState(() => loadSiteReviews(companyName));
-  const { averageRating, reviewCount } = getSiteReviewSummary(siteReviews);
+  const [currentClassification, setCurrentClassification] = useState(
+    classification ?? emptyClassification,
+  );
+  const averageRating = currentClassification.media;
+  const reviewCount = currentClassification.quantidade;
   const hasRating = Number.isFinite(averageRating);
   const formattedReviewCount = `${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'}`;
 
   useEffect(() => {
-    const storageKey = getSiteReviewsStorageKey(companyName);
-    setSiteReviews(loadSiteReviews(companyName));
-    const syncReviews = (event) => {
-      if (event.key === storageKey || event.key === null) {
-        setSiteReviews(loadSiteReviews(companyName));
-      }
-    };
-
-    window.addEventListener('storage', syncReviews);
-    return () => window.removeEventListener('storage', syncReviews);
-  }, [companyName]);
+    setCurrentClassification(classification ?? emptyClassification);
+  }, [classification]);
 
   return (
     <>
@@ -48,9 +39,10 @@ export function BotaoAvaliacoes({ companyName }) {
       <ModalAvaliacao
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        serviceId={serviceId}
         companyName={companyName}
-        siteReviews={siteReviews}
-        onReviewsChange={setSiteReviews}
+        classification={currentClassification}
+        onClassificationChange={setCurrentClassification}
       />
     </>
   );

@@ -96,4 +96,9 @@ export const WriteReviewButton = styled.button`
     outline: 3px solid var(--brand-green);
     outline-offset: 3px;
   }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.65;
+  }
 `;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CabecalhoLoja } from '../../components/CabecalhoLoja/CabecalhoLoja.jsx';
+import { BotaoAvaliacoes } from '../../components/BotaoAvaliacoes/BotaoAvaliacoes.jsx';
 import { IdentidadeLoja } from '../../components/IdentidadeLoja/IdentidadeLoja.jsx';
 import { LinksLoja } from '../../components/LinksLoja/LinksLoja.jsx';
 import { companies } from '../../data/companies.js';
@@ -145,6 +146,13 @@ export default function PaginaLoja({ companyId }) {
               logo={service ? resolveServiceLogo(store.logo) : store.logo}
               location={getServiceLocation(store)}
             />
+            {service && (
+              <BotaoAvaliacoes
+                serviceId={store.id}
+                companyName={store.nome || 'Loja sem nome'}
+                classification={store.classificacao}
+              />
+            )}
           </IdentityColumn>
           <LinksColumn>
             <LinksLoja
